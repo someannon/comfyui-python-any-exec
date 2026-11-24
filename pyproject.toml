@@ -1,0 +1,14 @@
+[project]
+name = "comfyui-python-any-exec"
+description = "Execute custom Python code in ComfyUI with expandable ANY inputs and 8 fixed ANY outputs."
+version = "1.0.0"
+license = { file = "LICENSE" }
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/SEU_USUARIO/comfyui-python-any-exec"
+
+[tool.comfy]
+PublisherId = "seu_publisher_id"
+DisplayName = "Python Exec (Any I/O)"
+Icon = ""
