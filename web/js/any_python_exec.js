@@ -30,7 +30,7 @@ const HELP_HTML = `
   </h2>
 
   <p>
-    This node executes custom Python code written by the user (you). The main idea behind this node is to allow you to build dynamic prompts with random or sequential combinations of elements and traits.
+    This node evaluates a safe subset of Python written by the user (you) using an AST interpreter (without <code>eval</code>, <code>exec</code>, or <code>import</code>). The main idea behind this node is to allow you to build dynamic prompts with random or sequential combinations of elements and traits.
   </p>
 
   <p>
@@ -52,7 +52,7 @@ const HELP_HTML = `
     For instance, if you connect a string to an input socket named <code>a0</code> and want to check if its value is <code>"charizard"</code>, you can write:
   </p>
   <pre style="background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 10px; overflow-x: auto; color: #a5f3fc;"><code>if a0 == "charizard":
-    print("that's charizard")</code></pre>
+    out_0 = "fire dragon, dynamic pose"</code></pre>
 
   <h3 style="color: #93c5fd; margin-bottom: 6px;">Setting Outputs</h3>
   <p>
@@ -64,10 +64,27 @@ const HELP_HTML = `
     Just like the inputs, output sockets also accept <strong>any</strong> data type. Depending on your conditions, you can output a <code>CONDITIONING</code>, <code>MODEL</code>, <code>CLIP</code>, <code>INT</code>, <code>FLOAT</code>, <code>STRING</code>, or any other object. If you ever need more than 8 outputs, you can chain another instance of this node.
   </p>
 
-  <h3 style="color: #93c5fd; margin-bottom: 6px;">Managing & Renaming Sockets</h3>
+  <h3 style="color: #93c5fd; margin-bottom: 6px;">Capabilities</h3>
+  <ul style="padding-left: 20px; margin-top: 4px;">
+    <li><strong>Variables &amp; conditionals:</strong> Create and update variables (<code>=</code>, <code>+=</code>, <code>-=</code>, etc.), tuple/list unpacking, ternary expressions, and <code>if / else</code> branching.</li>
+    <li><strong>Lists &amp; dictionaries:</strong> Build, index, slice, and modify lists and dicts, including <code>append()</code>, <code>extend()</code>, <code>get()</code>, <code>keys()</code>, <code>values()</code>, and <code>items()</code>.</li>
+    <li><strong>Loops &amp; f-strings:</strong> Use <code>for ... in ...</code> loops and f-strings (<code>f"{...}"</code>) to assemble prompts or iterate over combinations.</li>
+    <li><strong>Random helpers:</strong> Use <code>randint</code>, <code>randrange</code>, <code>uniform</code>, <code>random</code>, <code>choice</code>, <code>choices</code>, and <code>sample</code> without importing modules.</li>
+    <li><strong>Itertools helpers:</strong> Call <code>product</code>, <code>permutations</code>, <code>combinations</code>, <code>combinations_with_replacement</code>, <code>chain</code>, <code>islice</code>, <code>cycle</code>, <code>repeat</code>, <code>zip_longest</code>, and <code>accumulate</code> directly or via <code>itertools.&lt;fn&gt;(...)</code>.</li>
+  </ul>
+
+  <h3 style="color: #fca5a5; margin-bottom: 6px;">Limitations</h3>
+  <ul style="padding-left: 20px; margin-top: 4px;">
+    <li><strong>No <code>import</code>, <code>eval</code>, or <code>exec</code>:</strong> Arbitrary module imports and dynamic code execution are disabled for safety and registry compatibility.</li>
+    <li><strong>No custom functions, classes, or <code>while</code> loops:</strong> Defining <code>def</code> or <code>class</code>, using <code>while</code>, list/dict comprehensions, or <code>try / except</code> blocks inside the snippet is not supported.</li>
+    <li><strong>Restricted attribute access:</strong> Underscore/dunder names and arbitrary object attributes/methods are blocked (only safe list/dict helpers and <code>itertools</code> functions are exposed).</li>
+    <li><strong>Loop iteration cap:</strong> <code>for</code> loops have a maximum iteration limit (10,000 steps) to prevent infinite loops from freezing ComfyUI.</li>
+  </ul>
+
+  <h3 style="color: #93c5fd; margin-bottom: 6px;">Managing &amp; Renaming Sockets</h3>
   <ul style="padding-left: 20px; margin-top: 4px;">
     <li>Use <strong>+ Input (ANY)</strong> and <strong>- Remove Input</strong> to expand or shrink input ports.</li>
-    <li>You can rename both inputs and outputs by <strong>right-clicking any socket</strong> and selecting <em>"Rename variable / socket"</em>, then use your custom names directly in your Python code so they fit your workflow's needs (e.g., <code>pose</code>, <code>seed_val</code>, <code>prompt_out</code>, <code>width</code>).</li>
+    <li>You can rename both inputs and outputs by <strong>right-clicking any socket</strong> and selecting <em>"Rename variable / socket"</em>, then use your custom names directly in your code so they fit your workflow's needs (e.g., <code>pose</code>, <code>seed_val</code>, <code>prompt_out</code>, <code>width</code>).</li>
   </ul>
 </div>
 `;
